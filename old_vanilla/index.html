@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghibli Productivity Suite</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="loader">
+        <div class="spinner"></div>
+        <p>Entering the magical world...</p>
+    </div>
+
+    <!-- Particle System Container -->
+    <div id="particles"></div>
+
+    <!-- Auth Screen -->
+    <div id="authScreen" class="auth-container hidden">
+        <div class="auth-box glass">
+            <h2>Welcome to Ghibli Productivity</h2>
+            <div id="authError" class="error-msg hidden"></div>
+            <input type="text" id="authUsername" placeholder="Username">
+            <input type="password" id="authPassword" placeholder="Password">
+            <button id="loginBtn" class="primary-btn">Login</button>
+            <button id="registerBtn" class="secondary-btn">Sign Up</button>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="mainApp" class="dashboard-layout hidden">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div class="user-profile">
+                <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                <h3 id="profileName">User</h3>
+                <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+            
+            <div class="sidebar-section">
+                <h4>Weather <span id="weatherTemp">--°C</span></h4>
+                <p id="weatherDesc">Loading...</p>
+            </div>
+
+            <div class="sidebar-section">
+                <h4>Focus Timer</h4>
+                <div id="pomodoroDisplay">25:00</div>
+                <div class="timer-controls">
+                    <button id="startTimerBtn"><i class="fa-solid fa-play"></i></button>
+                    <button id="resetTimerBtn"><i class="fa-solid fa-rotate-right"></i></button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4>Filters</h4>
+                <select id="filterType">
+                    <option value="All">All Tasks</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Pending">Pending</option>
+                    <option value="High Priority">High Priority</option>
+                    <option value="Today">Today</option>
+                </select>
+            </div>
+
+            <div class="sidebar-section">
+                <h4>Analytics</h4>
+                <canvas id="productivityChart" width="100" height="100"></canvas>
+            </div>
+
+            <div class="sidebar-section">
+                <h4>Sort By</h4>
+                <select id="sortTasks">
+                    <option value="Newest">Newest First</option>
+                    <option value="Oldest">Oldest First</option>
+                    <option value="Priority">Priority</option>
+                </select>
+            </div>
+
+            <div class="sidebar-section achievements">
+                <h4>Badges</h4>
+                <div id="badgesContainer"></div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="app glass">
+            <header>
+                <div class="header-top">
+                    <div class="title-section">
+                        <h1>Tasks</h1>
+                        <p>Stay focused. Get things done.</p>
+                    </div>
+                    <div class="clock-quote-section">
+                        <div id="digitalClock" class="glow-text">00:00:00 AM</div>
+                        <div id="currentDate">Jan 1, 2026</div>
+                    </div>
+                </div>
+                
+                <div class="quote-container">
+                    <p id="motivationalQuote" class="fade-in">"Small steps every day create big achievements."</p>
+                </div>
+            </header>
+
+            <div class="days" id="daysContainer">
+                <button class="day" data-day="Monday">Mon</button>
+                <button class="day" data-day="Tuesday">Tue</button>
+                <button class="day" data-day="Wednesday">Wed</button>
+                <button class="day" data-day="Thursday">Thu</button>
+                <button class="day" data-day="Friday">Fri</button>
+                <button class="day" data-day="Saturday">Sat</button>
+                <button class="day" data-day="Sunday">Sun</button>
+                <button class="day" data-day="All">All Days</button>
+            </div>
+
+            <!-- AI Task Planner -->
+            <section class="ai-planner glass-light">
+                <h4><i class="fa-solid fa-wand-magic-sparkles"></i> AI Task Planner</h4>
+                <div class="ai-input-group">
+                    <input type="text" id="aiIdeaInput" placeholder="Describe a project (e.g. 'Build a birdhouse')">
+                    <button id="aiPlanBtn" class="primary-btn">Generate Plan</button>
+                </div>
+            </section>
+
+            <section class="add-task glass-light">
+                <div class="task-inputs">
+                    <input id="taskInput" type="text" placeholder="Task Title...">
+                    <textarea id="taskDesc" placeholder="Task Description..." rows="2"></textarea>
+                    <div class="task-meta-inputs">
+                        <select id="taskPriority">
+                            <option value="Low">Low Priority</option>
+                            <option value="Medium">Medium Priority</option>
+                            <option value="High">High Priority</option>
+                        </select>
+                        <select id="taskCategory">
+                            <option value="Learning">📚 Learning</option>
+                            <option value="Coding">💻 Coding</option>
+                            <option value="Health">🏃 Health</option>
+                            <option value="Personal">🏠 Personal</option>
+                            <option value="Work">💼 Work</option>
+                        </select>
+                        <input type="date" id="taskDueDate">
+                    </div>
+                </div>
+                <button id="addBtn"><i class="fa-solid fa-plus"></i></button>
+            </section>
+
+            <section class="toolbar">
+                <div class="search-box glass-light">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input id="searchInput" placeholder="Search tasks">
+                </div>
+            </section>
+
+            <section id="taskContainer">
+                <!-- Tasks will appear here -->
+            </section>
+
+            <footer>
+                <div><span id="total">0</span> Tasks</div>
+                <div><span id="completed">0</span> Completed</div>
+                <div><span id="pending">0</span> Pending</div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal hidden">
+        <div class="modal-content glass">
+            <h3>Edit Task</h3>
+            <input type="hidden" id="editTaskId">
+            <input type="text" id="editTaskTitle" placeholder="Task Title">
+            <textarea id="editTaskDesc" placeholder="Description" rows="3"></textarea>
+            <div class="task-meta-inputs">
+                <select id="editTaskPriority">
+                    <option value="Low">Low Priority</option>
+                    <option value="Medium">Medium Priority</option>
+                    <option value="High">High Priority</option>
+                </select>
+                <select id="editTaskCategory">
+                    <option value="Learning">📚 Learning</option>
+                    <option value="Coding">💻 Coding</option>
+                    <option value="Health">🏃 Health</option>
+                    <option value="Personal">🏠 Personal</option>
+                    <option value="Work">💼 Work</option>
+                </select>
+                <input type="date" id="editTaskDueDate">
+            </div>
+            <div class="modal-actions">
+                <button id="saveEditBtn" class="primary-btn">Save</button>
+                <button id="cancelEditBtn" class="secondary-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
